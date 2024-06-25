@@ -114,7 +114,7 @@ leveraging the masked, preprocessed T2w and remapped anatomical segmentation.
         63: 50,
         77: 51,
         85: 21,
-        172: 19,
+        172: 0,
         253: 48
     }
     map_labels = pe.Node(MapLabels(mappings=aseg2mcrib), name="map_labels")
