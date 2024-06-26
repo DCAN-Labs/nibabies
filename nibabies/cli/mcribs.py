@@ -40,7 +40,7 @@ def main(argv: list = None):
         11: 41,
         12: 47,
         13: 47,
-        14: 0,
+        14: 114,
         15: 0,
         16: 19,
         17: 1,
@@ -68,7 +68,7 @@ def main(argv: list = None):
         63: 50,
         77: 51,
         85: 21,
-        172: 0,
+        172: 172,
         253: 48
     }
     map_labels = pe.Node(MapLabels(in_file=seg_file, mappings=aseg2mcrib), name='map_labels')
