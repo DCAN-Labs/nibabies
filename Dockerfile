@@ -207,7 +207,7 @@ ENV PERL5LIB="$MINC_LIB_DIR/perl5/5.8.5" \
     PATH="$FREESURFER_HOME/bin:$FREESURFER_HOME/tktools:$MINC_BIN_DIR:$PATH"
 
 # MCRIBS (required legacy python)
-COPY --from=dcanumn/mcribs:allow-isx /opt/MCRIBS/ /opt/MCRIBS
+COPY --from=dcanumn/mcribs:allow-isx3 /opt/MCRIBS/ /opt/MCRIBS
 COPY --from=pyenv /usr/local/lib/ /usr/local/lib/
 ENV PATH="/opt/MCRIBS/bin:/opt/MCRIBS/MIRTK/MIRTK-install/bin:/opt/MCRIBS/MIRTK/MIRTK-install/lib/tools:${PATH}" \
     LD_LIBRARY_PATH="/opt/MCRIBS/lib:/opt/MCRIBS/ITK/ITK-install/lib:/opt/MCRIBS/VTK/VTK-install/lib:/opt/MCRIBS/MIRTK/MIRTK-install/lib:/usr/local/lib:${LD_LIBRARY_PATH}" \
