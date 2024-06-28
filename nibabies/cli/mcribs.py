@@ -28,23 +28,27 @@ def main(argv: list = None):
     seg_file = _check_file(pargs.segmentation)
 
     aseg2mcrib = {
+        1: 21,
         2: 51,
         3: 21,
         4: 49,
         5: 0,
+        6: 17,
         7: 17,
         8: 17,
         10: 43,
         11: 41,
         12: 47,
         13: 47,
-        14: 0,
+        14: 114,
         15: 0,
         16: 19,
         17: 1,
         18: 3,
+        24: 83,
         26: 41,
         28: 45,
+        30: 51,
         31: 49,
         41: 52,
         42: 20,
@@ -60,8 +64,12 @@ def main(argv: list = None):
         54: 4,
         58: 40,
         60: 44,
+        62: 25,
         63: 50,
-        253: 48,
+        77: 51,
+        85: 21,
+        172: 172,
+        253: 48
     }
     map_labels = pe.Node(MapLabels(in_file=seg_file, mappings=aseg2mcrib), name='map_labels')
 
