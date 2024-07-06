@@ -379,6 +379,7 @@ def init_anat_derivatives_wf(
                 "anat_ribbon",
                 "surfaces",
                 "morphometrics",
+                "roi",
                 # CIFTI
                 "cifti_metadata",
                 "cifti_density",
@@ -792,6 +793,18 @@ def init_anat_derivatives_wf(
         name="ds_morphs",
         run_without_submitting=True,
     )
+    name_roi = pe.MapNode(
+        Path2BIDS(pattern= r"(?P<hemi>[lr])h.(?P<suffix>(roi)).[\w\d_-]*(?P<extprefix>\.\w+)?"),
+        iterfield="in_file",
+        name="name_roi",
+        run_without_submitting=True,
+    )
+    ds_roi = pe.MapNode(
+        DerivativesDataSink(base_directory=output_dir, desc="roi", suffix="thickness", extension=".shape.gii"),
+        iterfield=["in_file", "hemi"],
+        name="ds_roi",
+        run_without_submitting=True,
+    )
     # Parcellations
     ds_anat_fsaseg = pe.Node(
         DerivativesDataSink(base_directory=output_dir, desc="aseg", suffix="dseg", compress=True),
@@ -832,6 +845,10 @@ def init_anat_derivatives_wf(
                                 (source_files, 'source_file')]),
         (name_morphs, ds_morphs, [('hemi', 'hemi'),
                                   ('suffix', 'suffix')]),
+        (inputnode, name_roi, [('roi', 'in_file')]),
+        (inputnode, ds_roi, [('roi', 'in_file'),
+                                (source_files, 'source_file')]),
+        (name_roi, ds_roi, [('hemi', 'hemi')]),
         (inputnode, ds_anat_fsaseg, [('anat_fs_aseg', 'in_file'),
                                      (source_files, 'source_file')]),
         (inputnode, ds_anat_fsparc, [('anat_fs_aparc', 'in_file'),
