@@ -32,6 +32,7 @@ SURFACE_OUTPUTS = [
     "fsnative2t1w_xfm",
     "surfaces",
     "morphometrics",
+    "roi",
     "out_aseg",
     "out_aparc",
 ]
@@ -205,7 +206,8 @@ leveraging the masked, preprocessed T2w and remapped anatomical segmentation.
         (t1w2fsnative_xfm, outputnode, [('out_lta', 't1w2fsnative_xfm')]),
         (gifti_surface_wf, outputnode, [
             ('outputnode.surfaces', 'surfaces'),
-            ('outputnode.morphometrics', 'morphometrics')]),
+            ('outputnode.morphometrics', 'morphometrics'),
+            ('outputnode.roi', 'roi')]),
     ])
     # fmt:on
     return wf
@@ -379,6 +381,7 @@ leveraging the masked, preprocessed T1w and anatomical segmentation.
         (gifti_surface_wf, outputnode, [
             ('outputnode.surfaces', 'surfaces'),
             ('outputnode.morphometrics', 'morphometrics'),
+            ('outputnode.roi', 'roi')
         ]),
     ])
     # fmt: on
