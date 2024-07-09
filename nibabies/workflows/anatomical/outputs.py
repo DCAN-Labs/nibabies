@@ -6,6 +6,7 @@ from __future__ import annotations
 import typing as ty
 from pathlib import Path
 
+from niworkflows.interfaces.workbench import MetricMask
 from nipype.interfaces import utility as niu
 from nipype.pipeline import engine as pe
 from niworkflows.engine.workflows import LiterateWorkflow as Workflow
@@ -819,6 +820,44 @@ def init_anat_derivatives_wf(
         run_without_submitting=True,
     )
 
+    select_L_morpho = pe.Node(
+        niu.Select(index=[0, 1, 2]),
+        name="select_L_morpho",
+        run_without_submitting=True,
+    )
+    select_R_morpho = pe.Node(
+        niu.Select(index=[3, 4, 5]),
+        name="select_R_morpho",
+        run_without_submitting=True,
+    )   
+    select_L_roi = pe.Node(
+        niu.Select(index=[0]),
+        name="select_L_roi",
+        run_without_submitting=True,
+    )
+    select_R_roi = pe.Node(
+        niu.Select(index=[1]),
+        name="select_R_roi",
+        run_without_submitting=True,
+    )
+    mask_L_morpho = pe.MapNode(
+        MetricMask(),
+        name="mask_L_morpho",
+        iterfield="in_file",
+        run_without_submitting=True,
+        )
+    mask_R_morpho = pe.MapNode(
+        MetricMask(),
+        name="mask_R_morpho",
+        iterfield="in_file",
+        run_without_submitting=True,
+        )
+    merge_morpho = pe.Node(
+        niu.Merge(2, ravel_inputs=True),
+        name="merge_morpho",
+        run_without_submitting=True,
+    )
+
     # fmt: off
     workflow.connect([
         (inputnode, lta2itk_fwd, [('anat2fsnative_xfm', 'in_xfms')]),
@@ -840,9 +879,19 @@ def init_anat_derivatives_wf(
         (inputnode, ds_reg_fsLR, [('sphere_reg_fsLR', 'in_file'),
                                   (source_files, 'source_file')]),
         (name_reg_fsLR, ds_reg_fsLR, [('hemi', 'hemi')]),
+        (inputnode, select_L_morpho, [('morphometrics', 'inlist')]),
+        (inputnode, select_R_morpho, [('morphometrics', 'inlist')]),
+        (inputnode, select_L_roi, [('roi', 'inlist')]),
+        (inputnode, select_R_roi, [('roi', 'inlist')]),
+        (select_L_morpho, mask_L_morpho, [('out', 'in_file')]),
+        (select_R_morpho, mask_R_morpho, [('out', 'in_file')]),
+        (select_L_roi, mask_L_morpho, [('out', 'mask')]),
+        (select_R_roi, mask_R_morpho, [('out', 'mask')]),
+        (mask_L_morpho, merge_morpho, [('out_file', 'in1')]),
+        (mask_R_morpho, merge_morpho, [('out_file', 'in2')]),
+        (merge_morpho, ds_morphs, [('out', 'in_file')]),
         (inputnode, name_morphs, [('morphometrics', 'in_file')]),
-        (inputnode, ds_morphs, [('morphometrics', 'in_file'),
-                                (source_files, 'source_file')]),
+        (inputnode, ds_morphs, [(source_files, 'source_file')]),
         (name_morphs, ds_morphs, [('hemi', 'hemi'),
                                   ('suffix', 'suffix')]),
         (inputnode, name_roi, [('roi', 'in_file')]),
